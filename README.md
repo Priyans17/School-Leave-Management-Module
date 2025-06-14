@@ -61,15 +61,6 @@ The School Leave Management System is a complete solution for managing student a
 * Professional color palette based on CodePen aesthetic
 * WCAG accessibility support with keyboard navigation
 
-### 🎯 Cutting-edge Features
-
-* QR code generation for approved leave entries
-* Voice recognition for admin remarks
-* Drag and drop file upload with visual progress bar
-* Real-time toast notifications for all roles
-* Data backup and restore functionality
-* Calendar integration to view leave history
-
 ## 🛠️ Installation & Setup
 
 ### Prerequisites
