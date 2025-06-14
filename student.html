@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - EduLeave</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-tertiary: #0f3460;
+            --accent-primary: #27ae60;
+            --accent-secondary: #2ecc71;
+            --text-primary: #ffffff;
+            --text-secondary: #b8c5d6;
+            --text-muted: #8892b0;
+            --border-color: #233554;
+            --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --shadow-heavy: 0 20px 40px rgba(0, 0, 0, 0.2);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --warning-color: #f39c12;
+            --error-color: #e74c3c;
+            --success-color: #27ae60;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #e2e8f0;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: var(--transition);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            color: var(--accent-primary);
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-primary);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: var(--accent-primary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .logout-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            background: var(--error-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .dashboard-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-medium);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .card-header i {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--accent-primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+
+        .form-input::placeholder, .form-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-select option {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .file-upload {
+            border: 2px dashed var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--bg-tertiary);
+        }
+
+        .file-upload:hover, .file-upload.dragover {
+            border-color: var(--accent-primary);
+            background: rgba(39, 174, 96, 0.05);
+            transform: scale(1.02);
+        }
+
+        .file-upload i {
+            font-size: 2rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+        }
+
+        .file-upload p {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .submit-btn {
+            background: var(--accent-primary);
+            border: none;
+            border-radius: var(--border-radius);
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            font-family: inherit;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .leave-card {
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .leave-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--warning-color);
+            border-radius: 2px 0 0 2px;
+        }
+
+        .leave-card.approved::before {
+            background: var(--success-color);
+        }
+
+        .leave-card.rejected::before {
+            background: var(--error-color);
+        }
+
+        .leave-card:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-light);
+        }
+
+        .leave-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .leave-type {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .leave-dates {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background: rgba(243, 156, 18, 0.2);
+            color: var(--warning-color);
+            border: 1px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .status-approved {
+            background: rgba(39, 174, 96, 0.2);
+            color: var(--success-color);
+            border: 1px solid rgba(39, 174, 96, 0.3);
+        }
+
+        .status-rejected {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--error-color);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .leave-reason {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .leave-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem 1.5rem;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-medium);
+            transform: translateX(400px);
+            transition: var(--transition);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--error-color);
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .nav-content {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="#" class="logo">
+                <i class="fas fa-graduation-cap"></i> EduLeave
+            </a>
+            <div class="nav-user">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <span id="user-name">Student</span>
+                </div>
+                <a href="login.html" class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Student Dashboard</h1>
+            <p>Manage your leave applications efficiently</p>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="total-applications">0</div>
+                <div class="stat-label">Total Applications</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="pending-applications">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="approved-applications">0</div>
+                <div class="stat-label">Approved</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="rejected-applications">0</div>
+                <div class="stat-label">Rejected</div>
+            </div>
+        </div>
+
+        <!-- Leave Application Form -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-plus-circle"></i>
+                <h2>Apply for Leave</h2>
+            </div>
+            
+            <form id="leave-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Leave Type</label>
+                        <select class="form-select" id="leave-type" required>
+                            <option value="">Select leave type</option>
+                            <option value="sick">🤒 Sick Leave</option>
+                            <option value="personal">👤 Personal Leave</option>
+                            <option value="academic">📚 Academic Leave</option>
+                            <option value="emergency">🚨 Emergency Leave</option>
+                            <option value="vacation">🏖️ Vacation Leave</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">From Date</label>
+                        <input type="date" class="form-input" id="from-date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">To Date</label>
+                        <input type="date" class="form-input" id="to-date" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Reason for Leave</label>
+                    <textarea class="form-textarea" id="leave-reason" maxlength="500" placeholder="Please provide detailed reason for your leave request..." required></textarea>
+                    <div class="char-counter">
+                        <span id="char-count">0</span>/500 characters
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Supporting Documents (Optional)</label>
+                    <div class="file-upload" onclick="document.getElementById('file-input').click()">
+                        <input type="file" id="file-input" style="display: none;" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Click to upload or drag and drop files</p>
+                        <p style="font-size: 0.85rem; opacity: 0.7;">PDF, Images, Documents (Max 5MB each)</p>
+                    </div>
+                    <div id="file-list"></div>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Submit Leave Application
+                </button>
+            </form>
+        </div>
+
+        <!-- Leave History -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-history"></i>
+                <h2>Leave History</h2>
+            </div>
+            <div id="leave-history">
+                <!-- Leave history will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">
+        <i id="toast-icon" class="fas fa-check-circle"></i>
+        <span id="toast-message"></span>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let uploadedFiles = [];
+        let currentTheme = 'dark';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication();
+            setupEventListeners();
+            loadUserData();
+            loadLeaveHistory();
+            updateStatistics();
+            initializeTheme();
+        });
+
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            currentTheme = savedTheme;
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            localStorage.setItem('theme', currentTheme);
+            updateThemeIcon(currentTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-icon');
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        function checkAuthentication() {
+            const user = localStorage.getItem('currentUser');
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            currentUser = JSON.parse(user);
+            if (currentUser.role !== 'student') {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            document.getElementById('user-name').textContent = currentUser.name;
+        }
+
+        function setupEventListeners() {
+            document.getElementById('leave-form').addEventListener('submit', handleLeaveSubmission);
+            document.getElementById('leave-reason').addEventListener('input', updateCharCounter);
+            document.getElementById('from-date').addEventListener('change', validateDates);
+            document.getElementById('to-date').addEventListener('change', validateDates);
+            
+            // File upload
+            const fileUpload = document.querySelector('.file-upload');
+            const fileInput = document.getElementById('file-input');
+            
+            fileUpload.addEventListener('dragover', handleDragOver);
+            fileUpload.addEventListener('dragleave', handleDragLeave);
+            fileUpload.addEventListener('drop', handleFileDrop);
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('from-date').min = today;
+            document.getElementById('to-date').min = today;
+        }
+
+        function loadUserData() {
+            // Load user-specific data and preferences
+        }
+
+        function handleLeaveSubmission(e) {
+            e.preventDefault();
+            
+            const formData = {
+                id: Date.now(),
+                userId: currentUser.id,
+                userName: currentUser.name,
+                userEmail: currentUser.email,
+                employeeId: currentUser.employeeId,
+                type: document.getElementById('leave-type').value,
+                fromDate: document.getElementById('from-date').value,
+                toDate: document.getElementById('to-date').value,
+                reason: document.getElementById('leave-reason').value,
+                files: uploadedFiles,
+                status: 'pending',
+                submittedAt: new Date().toISOString(),
+                remarks: ''
+            };
+
+            // Save to localStorage
+            const leaves = getLeaves();
+            leaves.push(formData);
+            localStorage.setItem('leaves', JSON.stringify(leaves));
+
+            // Reset form
+            document.getElementById('leave-form').reset();
+            uploadedFiles = [];
+            document.getElementById('file-list').innerHTML = '';
+            updateCharCounter();
+
+            showToast('Leave application submitted successfully!', 'success');
+            loadLeaveHistory();
+            updateStatistics();
+        }
+
+        function updateCharCounter() {
+            const textarea = document.getElementById('leave-reason');
+            const counter = document.getElementById('char-count');
+            counter.textContent = textarea.value.length;
+        }
+
+        function validateDates() {
+            const fromDate = document.getElementById('from-date').value;
+            const toDate = document.getElementById('to-date').value;
+            
+            if (fromDate && toDate && new Date(fromDate) > new Date(toDate)) {
+                document.getElementById('to-date').setCustomValidity('End date must be after start date');
+                showToast('End date must be after start date', 'error');
+            } else {
+                document.getElementById('to-date').setCustomValidity('');
+            }
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleFileDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files);
+            processFiles(files);
+        }
+
+        function handleFileSelect(e) {
+            const files = Array.from(e.target.files);
+            processFiles(files);
+        }
+
+        function processFiles(files) {
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            
+            files.forEach(file => {
+                if (file.size > maxSize) {
+                    showToast(`File ${file.name} is too large. Maximum size is 5MB.`, 'error');
+                    return;
+                }
+                
+                if (!allowedTypes.includes(file.type)) {
+                    showToast(`File type ${file.type} is not allowed.`, 'error');
+                    return;
+                }
+                
+                uploadedFiles.push({
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                });
+            });
+            
+            updateFileList();
+        }
+
+        function updateFileList() {
+            const fileList = document.getElementById('file-list');
+            fileList.innerHTML = '';
+            
+            uploadedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-tertiary); border-radius: var(--border-radius); margin-top: 0.5rem; border: 1px solid var(--border-color);';
+                fileItem.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-file" style="color: var(--accent-primary);"></i>
+                        <span style="color: var(--text-primary);">${file.name}</span>
+                        <small style="color: var(--text-muted);">(${formatFileSize(file.size)})</small>
+                    </div>
+                    <button type="button" onclick="removeFile(${index})" style="background: none; border: none; color: var(--error-color); cursor: pointer; font-size: 1.1rem; padding: 0.25rem;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            updateFileList();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function loadLeaveHistory() {
+            const leaves = getLeaves().filter(leave => leave.userId === currentUser.id);
+            const historyContainer = document.getElementById('leave-history');
+            
+            if (leaves.length === 0) {
+                historyContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>No leave applications found</h3>
+                        <p>Your leave applications will appear here once submitted.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort by submission date (newest first)
+            leaves.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+            
+            historyContainer.innerHTML = leaves.map(leave => `
+                <div class="leave-card ${leave.status}">
+                    <div class="leave-header">
+                        <div>
+                            <div class="leave-type">${getLeaveTypeIcon(leave.type)} ${leave.type.charAt(0).toUpperCase() + leave.type.slice(1)} Leave</div>
+                            <div class="leave-dates">${formatDate(leave.fromDate)} - ${formatDate(leave.toDate)}</div>
+                        </div>
+                        <span class="status-badge status-${leave.status}">${leave.status}</span>
+                    </div>
+                    <div class="leave-reason">${leave.reason}</div>
+                    ${leave.remarks ? `<div style="background: var(--bg-tertiary); padding: 1rem; border-radius: var(--border-radius); margin-top: 1rem; border: 1px solid var(--border-color);"><strong>Remarks:</strong> ${leave.remarks}</div>` : ''}
+                    ${leave.files.length > 0 ? `<div style="margin-top: 1rem; color: var(--text-secondary);"><strong>Attachments:</strong> ${leave.files.map(f => f.name).join(', ')}</div>` : ''}
+                    <div class="leave-meta">Submitted: ${formatDateTime(leave.submittedAt)}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateStatistics() {
+            const leaves = getLeaves().filter(leave => leave.userId === currentUser.id);
+            
+            const stats = {
+                total: leaves.length,
+                pending: leaves.filter(l => l.status === 'pending').length,
+                approved: leaves.filter(l => l.status === 'approved').length,
+                rejected: leaves.filter(l => l.status === 'rejected').length
+            };
+            
+            // Animate counters
+            animateCounter('total-applications', stats.total);
+            animateCounter('pending-applications', stats.pending);
+            animateCounter('approved-applications', stats.approved);
+            animateCounter('rejected-applications', stats.rejected);
+        }
+
+        function animateCounter(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            let currentValue = 0;
+            const increment = targetValue / 20;
+            const timer = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= targetValue) {
+                    element.textContent = targetValue;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(currentValue);
+                }
+            }, 50);
+        }
+
+        function getLeaves() {
+            return JSON.parse(localStorage.getItem('leaves') || '[]');
+        }
+
+        function getLeaveTypeIcon(type) {
+            const icons = {
+                sick: '🤒',
+                personal: '👤',
+                academic: '📚',
+                emergency: '🚨',
+                vacation: '🏖️'
+            };
+            return icons[type] || '📄';
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function formatDateTime(dateString) {
+            return new Date(dateString).toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            const messageEl = document.getElementById('toast-message');
+            
+            messageEl.textContent = message;
+            
+            if (type === 'error') {
+                toast.classList.add('error');
+                icon.className = 'fas fa-exclamation-circle';
+            } else {
+                toast.classList.remove('error');
+                icon.className = 'fas fa-check-circle';
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+
+        // Real-time updates (check for changes every 30 seconds)
+        setInterval(() => {
+            loadLeaveHistory();
+            updateStatistics();
+        }, 30000);
+    </script>
+</body>
+</html>

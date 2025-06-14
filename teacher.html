@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - EduLeave</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-tertiary: #0f3460;
+            --accent-primary: #27ae60;
+            --accent-secondary: #2ecc71;
+            --text-primary: #ffffff;
+            --text-secondary: #b8c5d6;
+            --text-muted: #8892b0;
+            --border-color: #233554;
+            --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --shadow-heavy: 0 20px 40px rgba(0, 0, 0, 0.2);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --warning-color: #f39c12;
+            --error-color: #e74c3c;
+            --success-color: #27ae60;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #e2e8f0;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: var(--transition);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            color: var(--accent-primary);
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-primary);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: var(--accent-primary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .logout-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            background: var(--error-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .dashboard-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-medium);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .card-title h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .filter-tab {
+            padding: 0.5rem 1rem;
+            border-radius: calc(var(--border-radius) - 4px);
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .filter-tab.active {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--accent-primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .request-card {
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .request-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--warning-color);
+            border-radius: 2px 0 0 2px;
+        }
+
+        .request-card:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-light);
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .student-info {
+            flex: 1;
+        }
+
+        .student-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .student-id {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .leave-type {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .leave-dates {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background: rgba(243, 156, 18, 0.2);
+            color: var(--warning-color);
+            border: 1px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .status-approved {
+            background: rgba(39, 174, 96, 0.2);
+            color: var(--success-color);
+            border: 1px solid rgba(39, 174, 96, 0.3);
+        }
+
+        .status-rejected {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--error-color);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .leave-reason {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+        }
+
+        .leave-attachments {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .attachment-item {
+            display: inline-block;
+            background: var(--bg-secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            font-family: inherit;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-approve {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .btn-reject {
+            background: var(--error-color);
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .request-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideInUp 0.3s ease-out;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+
+        .form-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-cancel {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-cancel:hover {
+            background: var(--border-color);
+        }
+
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem 1.5rem;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-medium);
+            transform: translateX(400px);
+            transition: var(--transition);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--error-color);
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .nav-content {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="#" class="logo">
+                <i class="fas fa-graduation-cap"></i> EduLeave
+            </a>
+            <div class="nav-user">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <span id="user-name">Teacher</span>
+                </div>
+                <a href="login.html" class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Teacher Dashboard</h1>
+            <p>Review and manage student leave requests</p>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="total-requests">0</div>
+                <div class="stat-label">Total Requests</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="pending-requests">0</div>
+                <div class="stat-label">Pending Review</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="approved-requests">0</div>
+                <div class="stat-label">Approved</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="rejected-requests">0</div>
+                <div class="stat-label">Rejected</div>
+            </div>
+        </div>
+
+        <!-- Leave Requests -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h2>Leave Requests</h2>
+                </div>
+                <div class="filter-tabs">
+                    <div class="filter-tab active" onclick="filterRequests('all')">All</div>
+                    <div class="filter-tab" onclick="filterRequests('pending')">Pending</div>
+                    <div class="filter-tab" onclick="filterRequests('approved')">Approved</div>
+                    <div class="filter-tab" onclick="filterRequests('rejected')">Rejected</div>
+                </div>
+            </div>
+            <div id="requests-container">
+                <!-- Requests will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Modal -->
+    <div id="action-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">Review Leave Request</h3>
+                <button class="close-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Remarks (Optional)</label>
+                <textarea class="form-textarea" id="modal-remarks" placeholder="Add any remarks or feedback..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn" id="confirm-btn" onclick="confirmAction()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">
+        <i id="toast-icon" class="fas fa-check-circle"></i>
+        <span id="toast-message"></span>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let currentAction = null;
+        let currentRequestId = null;
+        let currentFilter = 'all';
+        let currentTheme = 'dark';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication();
+            loadRequests();
+            updateStatistics();
+            setupRealTimeUpdates();
+            initializeTheme();
+        });
+
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            currentTheme = savedTheme;
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            localStorage.setItem('theme', currentTheme);
+            updateThemeIcon(currentTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-icon');
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        function checkAuthentication() {
+            const user = localStorage.getItem('currentUser');
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            currentUser = JSON.parse(user);
+            if (currentUser.role !== 'teacher') {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            document.getElementById('user-name').textContent = currentUser.name;
+        }
+
+        function loadRequests() {
+            const leaves = getLeaves();
+            const container = document.getElementById('requests-container');
+            
+            // Filter requests based on current filter
+            let filteredLeaves = leaves;
+            if (currentFilter !== 'all') {
+                filteredLeaves = leaves.filter(leave => leave.status === currentFilter);
+            }
+            
+            if (filteredLeaves.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>No ${currentFilter === 'all' ? '' : currentFilter} requests found</h3>
+                        <p>Leave requests will appear here when submitted by students.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort by submission date (newest first)
+            filteredLeaves.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+            
+            container.innerHTML = filteredLeaves.map(leave => `
+                <div class="request-card">
+                    <div class="request-header">
+                        <div class="student-info">
+                            <div class="student-name">${leave.userName}</div>
+                            <div class="student-id">ID: ${leave.employeeId} | ${leave.userEmail}</div>
+                            <div class="leave-type">${getLeaveTypeIcon(leave.type)} ${leave.type.charAt(0).toUpperCase() + leave.type.slice(1)} Leave</div>
+                            <div class="leave-dates">${formatDate(leave.fromDate)} - ${formatDate(leave.toDate)} (${calculateDays(leave.fromDate, leave.toDate)} days)</div>
+                        </div>
+                        <span class="status-badge status-${leave.status}">${leave.status}</span>
+                    </div>
+                    
+                    <div class="leave-reason">
+                        <strong>Reason:</strong><br>
+                        ${leave.reason}
+                    </div>
+                    
+                    ${leave.files.length > 0 ? `
+                        <div class="leave-attachments">
+                            <strong>Attachments:</strong><br>
+                            ${leave.files.map(file => `<span class="attachment-item"><i class="fas fa-file"></i> ${file.name}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                    
+                    ${leave.status === 'pending' ? `
+                        <div class="action-buttons">
+                            <button class="btn btn-approve" onclick="openActionModal('approve', ${leave.id})">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-reject" onclick="openActionModal('reject', ${leave.id})">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </div>
+                    ` : ''}
+                    
+                    ${leave.remarks ? `
+                        <div style="background: var(--bg-secondary); padding: 1rem; border-radius: var(--border-radius); margin-top: 1rem; border: 1px solid var(--border-color);">
+                            <strong>Remarks:</strong> ${leave.remarks}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="request-meta">
+                        Submitted: ${formatDateTime(leave.submittedAt)}
+                        ${leave.processedAt ? ` | Processed: ${formatDateTime(leave.processedAt)}` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterRequests(filter) {
+            currentFilter = filter;
+            
+            // Update active tab
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            loadRequests();
+        }
+
+        function updateStatistics() {
+            const leaves = getLeaves();
+            
+            const stats = {
+                total: leaves.length,
+                pending: leaves.filter(l => l.status === 'pending').length,
+                approved: leaves.filter(l => l.status === 'approved').length,
+                rejected: leaves.filter(l => l.status === 'rejected').length
+            };
+            
+            // Animate counters
+            animateCounter('total-requests', stats.total);
+            animateCounter('pending-requests', stats.pending);
+            animateCounter('approved-requests', stats.approved);
+            animateCounter('rejected-requests', stats.rejected);
+        }
+
+        function animateCounter(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            let currentValue = 0;
+            const increment = targetValue / 20;
+            const timer = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= targetValue) {
+                    element.textContent = targetValue;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(currentValue);
+                }
+            }, 50);
+        }
+
+        function openActionModal(action, requestId) {
+            currentAction = action;
+            currentRequestId = requestId;
+            
+            const modal = document.getElementById('action-modal');
+            const title = document.getElementById('modal-title');
+            const confirmBtn = document.getElementById('confirm-btn');
+            
+            if (action === 'approve') {
+                title.textContent = 'Approve Leave Request';
+                confirmBtn.className = 'btn btn-approve';
+                confirmBtn.innerHTML = '<i class="fas fa-check"></i> Approve';
+            } else {
+                title.textContent = 'Reject Leave Request';
+                confirmBtn.className = 'btn btn-reject';
+                confirmBtn.innerHTML = '<i class="fas fa-times"></i> Reject';
+            }
+            
+            modal.classList.add('active');
+            document.getElementById('modal-remarks').value = '';
+        }
+
+        function closeModal() {
+            document.getElementById('action-modal').classList.remove('active');
+            currentAction = null;
+            currentRequestId = null;
+        }
+
+        function confirmAction() {
+            if (!currentAction || !currentRequestId) return;
+            
+            const remarks = document.getElementById('modal-remarks').value;
+            const leaves = getLeaves();
+            const leaveIndex = leaves.findIndex(l => l.id === currentRequestId);
+            
+            if (leaveIndex !== -1) {
+                leaves[leaveIndex].status = currentAction === 'approve' ? 'approved' : 'rejected';
+                leaves[leaveIndex].remarks = remarks;
+                leaves[leaveIndex].processedAt = new Date().toISOString();
+                leaves[leaveIndex].processedBy = currentUser.name;
+                
+                localStorage.setItem('leaves', JSON.stringify(leaves));
+                
+                showToast(`Leave request ${currentAction}d successfully!`, 'success');
+                
+                // Refresh data
+                loadRequests();
+                updateStatistics();
+            }
+            
+            closeModal();
+        }
+
+        function calculateDays(fromDate, toDate) {
+            const start = new Date(fromDate);
+            const end = new Date(toDate);
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            return diffDays;
+        }
+
+        function getLeaves() {
+            return JSON.parse(localStorage.getItem('leaves') || '[]');
+        }
+
+        function getLeaveTypeIcon(type) {
+            const icons = {
+                sick: '🤒',
+                personal: '👤',
+                academic: '📚',
+                emergency: '🚨',
+                vacation: '🏖️'
+            };
+            return icons[type] || '📄';
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function formatDateTime(dateString) {
+            return new Date(dateString).toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            const messageEl = document.getElementById('toast-message');
+            
+            messageEl.textContent = message;
+            
+            if (type === 'error') {
+                toast.classList.add('error');
+                icon.className = 'fas fa-exclamation-circle';
+            } else {
+                toast.classList.remove('error');
+                icon.className = 'fas fa-check-circle';
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+
+        function setupRealTimeUpdates() {
+            // Check for updates every 30 seconds
+            setInterval(() => {
+                loadRequests();
+                updateStatistics();
+            }, 30000);
+        }
+
+        // Modal close on outside click
+        document.getElementById('action-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+</body>
+</html>

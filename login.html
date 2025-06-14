@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduLeave - Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-tertiary: #0f3460;
+            --accent-primary: #27ae60;
+            --accent-secondary: #2ecc71;
+            --text-primary: #ffffff;
+            --text-secondary: #b8c5d6;
+            --text-muted: #8892b0;
+            --border-color: #233554;
+            --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --shadow-heavy: 0 20px 40px rgba(0, 0, 0, 0.2);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #e2e8f0;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            opacity: 0.8;
+            z-index: -1;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 1000;
+            box-shadow: var(--shadow-light);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .theme-toggle i {
+            color: var(--text-primary);
+            font-size: 1.2rem;
+        }
+
+        .container {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-heavy);
+            padding: 3rem;
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .logo h1 {
+            color: var(--text-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .logo h1 i {
+            color: var(--accent-primary);
+        }
+
+        .logo p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        .form-container {
+            position: relative;
+        }
+
+        .form-toggle {
+            display: flex;
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            border: 1px solid var(--border-color);
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 0.875rem;
+            text-align: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: calc(var(--border-radius) - 4px);
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 0.95rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .toggle-btn.active {
+            color: var(--text-primary);
+            background: var(--accent-primary);
+            box-shadow: var(--shadow-light);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-select option {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus + .input-icon,
+        .form-select:focus + .input-icon {
+            color: var(--accent-primary);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent-primary);
+            border: none;
+            border-radius: var(--border-radius);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            font-family: inherit;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .register-form {
+            display: none;
+        }
+
+        .register-form.active {
+            display: block;
+        }
+
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem 1.5rem;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-medium);
+            transform: translateX(400px);
+            transition: var(--transition);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            border-left: 4px solid #e74c3c;
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--accent-primary);
+        }
+
+        .toast i {
+            font-size: 1.2rem;
+        }
+
+        .toast.error i {
+            color: #e74c3c;
+        }
+
+        .toast.success i {
+            color: var(--accent-primary);
+        }
+
+        .floating-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float-shapes 20s infinite linear;
+        }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            left: 80%;
+            animation-delay: 7s;
+        }
+
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            left: 50%;
+            animation-delay: 14s;
+        }
+
+        @keyframes float-shapes {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.1;
+            }
+            90% {
+                opacity: 0.1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .version-info {
+            position: fixed;
+            bottom: 1rem;
+            left: 1rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+                padding: 2rem;
+            }
+            
+            .logo h1 {
+                font-size: 2rem;
+            }
+
+            .theme-toggle {
+                top: 1rem;
+                right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-moon" id="theme-icon"></i>
+    </div>
+
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="container">
+        <div class="logo">
+            <h1><i class="fas fa-graduation-cap"></i> EduLeave</h1>
+            <p>Smart Leave Management System</p>
+        </div>
+
+        <div class="form-toggle">
+            <div class="toggle-btn active" onclick="switchForm('login')">Sign In</div>
+            <div class="toggle-btn" onclick="switchForm('register')">Sign Up</div>
+        </div>
+
+        <!-- Login Form -->
+        <form id="login-form" class="login-form">
+            <div class="form-group">
+                <input type="email" class="form-input" placeholder="Email Address" required>
+                <i class="fas fa-envelope input-icon"></i>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-input" placeholder="Password" required>
+                <i class="fas fa-lock input-icon"></i>
+            </div>
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="register-form" class="register-form">
+            <div class="form-group">
+                <input type="text" class="form-input" placeholder="Full Name" required>
+                <i class="fas fa-user input-icon"></i>
+            </div>
+            <div class="form-group">
+                <input type="email" class="form-input" placeholder="Email Address" required>
+                <i class="fas fa-envelope input-icon"></i>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-input" placeholder="Employee/Student ID" required>
+                <i class="fas fa-id-card input-icon"></i>
+            </div>
+            <div class="form-group">
+                <select class="form-select" required>
+                    <option value="">Select Role</option>
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                    <option value="admin">Administrator</option>
+                </select>
+                <i class="fas fa-users input-icon"></i>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-input" placeholder="Password" required>
+                <i class="fas fa-lock input-icon"></i>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-input" placeholder="Confirm Password" required>
+                <i class="fas fa-lock input-icon"></i>
+            </div>
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+        </form>
+    </div>
+
+    <div class="version-info">
+        EduLeave v2.0 - Enhanced Edition
+    </div>
+
+    <div id="toast" class="toast">
+        <i id="toast-icon" class="fas fa-check-circle"></i>
+        <span id="toast-message"></span>
+    </div>
+
+    <script>
+        let currentForm = 'login';
+        let currentTheme = 'dark';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            checkExistingSession();
+            initializeTheme();
+        });
+
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            currentTheme = savedTheme;
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            localStorage.setItem('theme', currentTheme);
+            updateThemeIcon(currentTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-icon');
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        function setupEventListeners() {
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            document.getElementById('register-form').addEventListener('submit', handleRegister);
+        }
+
+        function switchForm(formType) {
+            const loginForm = document.querySelector('.login-form');
+            const registerForm = document.querySelector('.register-form');
+            const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+            currentForm = formType;
+
+            toggleBtns.forEach(btn => btn.classList.remove('active'));
+            
+            if (formType === 'login') {
+                loginForm.style.display = 'block';
+                registerForm.classList.remove('active');
+                toggleBtns[0].classList.add('active');
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.classList.add('active');
+                toggleBtns[1].classList.add('active');
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const email = e.target.querySelector('input[type="email"]').value;
+            const password = e.target.querySelector('input[type="password"]').value;
+
+            // Get users from localStorage
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                // Store current session
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                showToast('Login successful! Redirecting...', 'success');
+                
+                setTimeout(() => {
+                    redirectToRolePage(user.role);
+                }, 1500);
+            } else {
+                showToast('Invalid email or password!', 'error');
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const inputs = e.target.querySelectorAll('input, select');
+            const name = inputs[0].value;
+            const email = inputs[1].value;
+            const employeeId = inputs[2].value;
+            const role = inputs[3].value;
+            const password = inputs[4].value;
+            const confirmPassword = inputs[5].value;
+
+            // Validation
+            if (password !== confirmPassword) {
+                showToast('Passwords do not match!', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showToast('Password must be at least 6 characters!', 'error');
+                return;
+            }
+
+            // Check if user already exists
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            if (users.find(u => u.email === email)) {
+                showToast('User with this email already exists!', 'error');
+                return;
+            }
+
+            // Create new user
+            const newUser = {
+                id: Date.now(),
+                name,
+                email,
+                employeeId,
+                role,
+                password,
+                createdAt: new Date().toISOString()
+            };
+
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            showToast('Account created successfully! Please login.', 'success');
+            
+            setTimeout(() => {
+                switchForm('login');
+                e.target.reset();
+            }, 2000);
+        }
+
+        function redirectToRolePage(role) {
+            const pages = {
+                student: 'student.html',
+                teacher: 'teacher.html',
+                admin: 'admin.html'
+            };
+            
+            window.location.href = pages[role] || 'student.html';
+        }
+
+        function checkExistingSession() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const user = JSON.parse(currentUser);
+                showToast('Welcome back! Redirecting...', 'success');
+                setTimeout(() => {
+                    redirectToRolePage(user.role);
+                }, 1000);
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            const messageEl = document.getElementById('toast-message');
+            
+            messageEl.textContent = message;
+            
+            if (type === 'error') {
+                toast.classList.add('error');
+                icon.className = 'fas fa-exclamation-circle';
+            } else {
+                toast.classList.remove('error');
+                icon.className = 'fas fa-check-circle';
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // Create default admin user if none exists
+        function createDefaultUsers() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            if (users.length === 0) {
+                const defaultUsers = [
+                    {
+                        id: 1,
+                        name: 'Admin User',
+                        email: 'admin@school.edu',
+                        employeeId: 'ADM001',
+                        role: 'admin',
+                        password: 'admin123',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 2,
+                        name: 'John Teacher',
+                        email: 'teacher@school.edu',
+                        employeeId: 'TCH001',
+                        role: 'teacher',
+                        password: 'teacher123',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 3,
+                        name: 'Jane Student',
+                        email: 'student@school.edu',
+                        employeeId: 'STU001',
+                        role: 'student',
+                        password: 'student123',
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                localStorage.setItem('users', JSON.stringify(defaultUsers));
+            }
+        }
+
+        // Initialize default users
+        createDefaultUsers();
+    </script>
+</body>
+</html>
