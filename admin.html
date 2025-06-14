@@ -1,0 +1,2594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - EduLeave Pro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-tertiary: #0f3460;
+            --accent-primary: #27ae60;
+            --accent-secondary: #2ecc71;
+            --text-primary: #ffffff;
+            --text-secondary: #b8c5d6;
+            --text-muted: #8892b0;
+            --border-color: #233554;
+            --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --shadow-heavy: 0 20px 40px rgba(0, 0, 0, 0.2);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --warning-color: #f39c12;
+            --error-color: #e74c3c;
+            --success-color: #27ae60;
+            --info-color: #3498db;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #e2e8f0;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: var(--transition);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            color: var(--accent-primary);
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle, .notification-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-primary);
+            position: relative;
+        }
+
+        .theme-toggle:hover, .notification-btn:hover {
+            transform: scale(1.1);
+            background: var(--accent-primary);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--error-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .logout-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            background: var(--error-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .dashboard-title h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-title p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        .dashboard-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .action-btn {
+            background: var(--accent-primary);
+            border: none;
+            border-radius: var(--border-radius);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .action-btn.secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .action-btn.secondary:hover {
+            background: var(--bg-secondary);
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-medium);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .card-title h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--accent-primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .stat-change {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+
+        .stat-change.positive {
+            color: var(--success-color);
+        }
+
+        .stat-change.negative {
+            color: var(--error-color);
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: var(--transition);
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .tab.active {
+            color: var(--accent-primary);
+            border-bottom-color: var(--accent-primary);
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-tertiary);
+        }
+
+        .table th,
+        .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .table td {
+            color: var(--text-secondary);
+        }
+
+        .table tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background: rgba(243, 156, 18, 0.2);
+            color: var(--warning-color);
+            border: 1px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .status-approved {
+            background: rgba(39, 174, 96, 0.2);
+            color: var(--success-color);
+            border: 1px solid rgba(39, 174, 96, 0.3);
+        }
+
+        .status-rejected {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--error-color);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .close-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            height: 400px;
+        }
+
+        .chart-title {
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem 1.5rem;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-medium);
+            transform: translateX(400px);
+            transition: var(--transition);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--error-color);
+        }
+
+        .toast.warning {
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .voice-btn {
+            background: var(--accent-primary);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-btn:hover {
+            background: var(--accent-secondary);
+            transform: scale(1.1);
+        }
+
+        .voice-btn.recording {
+            background: var(--error-color);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .qr-container {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .activity-log {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+
+        .activity-item:hover {
+            background: var(--bg-secondary);
+            transform: translateX(4px);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+
+        .activity-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .notification-panel {
+            position: fixed;
+            top: 70px;
+            right: 2rem;
+            width: 350px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-heavy);
+            z-index: 999;
+            transform: translateX(400px);
+            transition: var(--transition);
+        }
+
+        .notification-panel.show {
+            transform: translateX(0);
+        }
+
+        .notification-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .notification-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .notification-item.unread {
+            background: rgba(39, 174, 96, 0.1);
+            border-left: 3px solid var(--accent-primary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .nav-content {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .dashboard-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .notification-panel {
+                width: calc(100vw - 2rem);
+                right: 1rem;
+            }
+        }
+
+        .analytics-card {
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .analytics-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-light);
+        }
+
+        .analytics-card h3 {
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .analytics-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .analytics-card li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .analytics-card li:last-child {
+            border-bottom: none;
+        }
+
+        .analytics-card strong {
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="#" class="logo">
+                <i class="fas fa-graduation-cap"></i> EduLeave Pro
+            </a>
+            <div class="nav-user">
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </div>
+                <div class="notification-btn" onclick="toggleNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notification-count">3</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <span id="user-name">Administrator</span>
+                </div>
+                <a href="login.html" class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notification-panel">
+        <div class="notification-header">
+            <h3>Notifications</h3>
+            <button class="close-btn" onclick="toggleNotifications()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="notification-list" id="notification-list">
+            <!-- Notifications will be populated here -->
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <div class="dashboard-title">
+                <h1>Admin Dashboard</h1>
+                <p>Complete system overview and management</p>
+            </div>
+            <div class="dashboard-actions">
+                <button class="action-btn" onclick="openModal('backup-modal')">
+                    <i class="fas fa-download"></i> Backup Data
+                </button>
+                <button class="action-btn secondary" onclick="openModal('settings-modal')">
+                    <i class="fas fa-cog"></i> Settings
+                </button>
+                <button class="action-btn" onclick="generateSystemReport()">
+                    <i class="fas fa-chart-line"></i> Generate Report
+                </button>
+            </div>
+        </div>
+
+        <!-- Real-time Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="stat-number" id="total-leaves">0</div>
+                <div class="stat-label">Total Leave Requests</div>
+                <div class="stat-change positive" id="leaves-change">
+                    <i class="fas fa-arrow-up"></i> +12% from last month
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-number" id="pending-leaves">0</div>
+                <div class="stat-label">Pending Approvals</div>
+                <div class="stat-change negative" id="pending-change">
+                    <i class="fas fa-arrow-down"></i> -5% from yesterday
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-number" id="approved-leaves">0</div>
+                <div class="stat-label">Approved Today</div>
+                <div class="stat-change positive" id="approved-change">
+                    <i class="fas fa-arrow-up"></i> +8% from yesterday
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-number" id="active-users">0</div>
+                <div class="stat-label">Active Users</div>
+                <div class="stat-change positive" id="users-change">
+                    <i class="fas fa-arrow-up"></i> +3 new this week
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="stat-number" id="departments">8</div>
+                <div class="stat-label">Departments</div>
+                <div class="stat-change" id="dept-change">
+                    <i class="fas fa-minus"></i> No change
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-number" id="urgent-requests">0</div>
+                <div class="stat-label">Urgent Requests</div>
+                <div class="stat-change negative" id="urgent-change">
+                    <i class="fas fa-arrow-up"></i> +2 since morning
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Tabs -->
+        <div class="card">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </div>
+                <div class="tab" onclick="switchTab('leave-management')">
+                    <i class="fas fa-calendar-check"></i> Leave Management
+                </div>
+                <div class="tab" onclick="switchTab('user-management')">
+                    <i class="fas fa-users-cog"></i> User Management
+                </div>
+                <div class="tab" onclick="switchTab('policy-config')">
+                    <i class="fas fa-cogs"></i> Policy Configuration
+                </div>
+                <div class="tab" onclick="switchTab('reports')">
+                    <i class="fas fa-chart-bar"></i> Reports & Analytics
+                </div>
+                <div class="tab" onclick="switchTab('audit-log')">
+                    <i class="fas fa-history"></i> Audit Log
+                </div>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="dashboard-content">
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <div class="chart-title">Leave Status Distribution</div>
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Department-wise Trends</div>
+                        <canvas id="departmentChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Monthly Leave Patterns</div>
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Leave Type Analysis</div>
+                        <canvas id="typeChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-fire"></i>
+                            <h2>Real-time Activity Feed</h2>
+                        </div>
+                        <button class="action-btn secondary" onclick="refreshActivity()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="activity-log" id="activity-feed">
+                        <!-- Real-time activity will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leave Management Tab -->
+            <div class="tab-content" id="leave-management-content">
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search leave requests..." id="leave-search">
+                    </div>
+                    <select class="form-select" id="status-filter">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                    <select class="form-select" id="type-filter">
+                        <option value="">All Types</option>
+                        <option value="sick">Sick Leave</option>
+                        <option value="vacation">Vacation</option>
+                        <option value="personal">Personal</option>
+                        <option value="emergency">Emergency</option>
+                    </select>
+                    <input type="date" class="form-input" id="date-filter">
+                    <button class="action-btn" onclick="exportLeaveData()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="table" id="leave-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Employee</th>
+                                <th>Department</th>
+                                <th>Leave Type</th>
+                                <th>Duration</th>
+                                <th>Status</th>
+                                <th>Submitted</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leave-table-body">
+                            <!-- Leave requests will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- User Management Tab -->
+            <div class="tab-content" id="user-management-content">
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search users..." id="user-search">
+                    </div>
+                    <select class="form-select" id="role-filter">
+                        <option value="">All Roles</option>
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <select class="form-select" id="department-filter">
+                        <option value="">All Departments</option>
+                        <option value="computer-science">Computer Science</option>
+                        <option value="mathematics">Mathematics</option>
+                        <option value="physics">Physics</option>
+                        <option value="chemistry">Chemistry</option>
+                    </select>
+                    <button class="action-btn" onclick="openModal('add-user-modal')">
+                        <i class="fas fa-plus"></i> Add User
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="table" id="user-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Department</th>
+                                <th>Leave Balance</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-table-body">
+                            <!-- Users will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Policy Configuration Tab -->
+            <div class="tab-content" id="policy-config-content">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-clipboard-list"></i>
+                            <h2>Leave Types & Quotas</h2>
+                        </div>
+                        <button class="action-btn" onclick="openModal('add-policy-modal')">
+                            <i class="fas fa-plus"></i> Add Policy
+                        </button>
+                    </div>
+                    <div id="policy-list">
+                        <!-- Policy configurations will be populated here -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-calendar-alt"></i>
+                            <h2>Holiday Calendar</h2>
+                        </div>
+                        <button class="action-btn" onclick="openModal('add-holiday-modal')">
+                            <i class="fas fa-plus"></i> Add Holiday
+                        </button>
+                    </div>
+                    <div id="holiday-calendar">
+                        <!-- Holiday calendar will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports & Analytics Tab -->
+            <div class="tab-content" id="reports-content">
+                <div class="filter-bar">
+                    <select class="form-select" id="report-type">
+                        <option value="monthly">Monthly Report</option>
+                        <option value="quarterly">Quarterly Report</option>
+                        <option value="yearly">Yearly Report</option>
+                        <option value="custom">Custom Range</option>
+                    </select>
+                    <input type="date" class="form-input" id="report-start-date">
+                    <input type="date" class="form-input" id="report-end-date">
+                    <button class="action-btn" onclick="generateReport()">
+                        <i class="fas fa-chart-line"></i> Generate Report
+                    </button>
+                    <button class="action-btn secondary" onclick="exportReport('pdf')">
+                        <i class="fas fa-file-pdf"></i> Export PDF
+                    </button>
+                    <button class="action-btn secondary" onclick="exportReport('excel')">
+                        <i class="fas fa-file-excel"></i> Export Excel
+                    </button>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <div class="chart-title">Absentee Heatmap</div>
+                        <canvas id="heatmapChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Leave Utilization Trends</div>
+                        <canvas id="utilizationChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Department Comparison</div>
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Seasonal Patterns</div>
+                        <canvas id="seasonalChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Audit Log Tab -->
+            <div class="tab-content" id="audit-log-content">
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search audit logs..." id="audit-search">
+                    </div>
+                    <select class="form-select" id="action-filter">
+                        <option value="">All Actions</option>
+                        <option value="approve">Approve</option>
+                        <option value="reject">Reject</option>
+                        <option value="create">Create</option>
+                        <option value="update">Update</option>
+                        <option value="delete">Delete</option>
+                    </select>
+                    <input type="date" class="form-input" id="audit-date-filter">
+                    <button class="action-btn secondary" onclick="exportAuditLog()">
+                        <i class="fas fa-download"></i> Export Log
+                    </button>
+                </div>
+
+                <div class="activity-log" id="audit-log-list">
+                    <!-- Audit log entries will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Leave Action Modal -->
+    <div class="modal" id="leave-action-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="leave-action-title">Review Leave Request</h3>
+                <button class="close-btn" onclick="closeModal('leave-action-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="leave-details">
+                <!-- Leave details will be populated here -->
+            </div>
+            <div class="form-group">
+                <label class="form-label">Admin Remarks</label>
+                <div style="display: flex; gap: 0.5rem; align-items: flex-start;">
+                    <textarea class="form-textarea" id="admin-remarks" placeholder="Add your remarks here..."></textarea>
+                    <button class="voice-btn" onclick="startVoiceInput()" id="voice-btn">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                <button class="action-btn" onclick="approveLeave()" style="background: var(--success-color);">
+                    <i class="fas fa-check"></i> Approve
+                </button>
+                <button class="action-btn" onclick="rejectLeave()" style="background: var(--error-color);">
+                    <i class="fas fa-times"></i> Reject
+                </button>
+                <button class="action-btn secondary" onclick="generateQRCode()">
+                    <i class="fas fa-qrcode"></i> Generate QR
+                </button>
+            </div>
+            <div class="qr-container" id="qr-container" style="display: none;">
+                <canvas id="qr-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div class="modal" id="add-user-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New User</h3>
+                <button class="close-btn" onclick="closeModal('add-user-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="add-user-form">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" id="new-user-name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="new-user-email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Employee ID</label>
+                    <input type="text" class="form-input" id="new-user-id" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Role</label>
+                    <select class="form-select" id="new-user-role" required>
+                        <option value="">Select Role</option>
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Department</label>
+                    <select class="form-select" id="new-user-department" required>
+                        <option value="">Select Department</option>
+                        <option value="computer-science">Computer Science</option>
+                        <option value="mathematics">Mathematics</option>
+                        <option value="physics">Physics</option>
+                        <option value="chemistry">Chemistry</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                    <button type="button" class="action-btn secondary" onclick="closeModal('add-user-modal')">
+                        Cancel
+                    </button>
+                    <button type="submit" class="action-btn">
+                        <i class="fas fa-plus"></i> Add User
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settings-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">System Settings</h3>
+                <button class="close-btn" onclick="closeModal('settings-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Session Timeout (minutes)</label>
+                <input type="number" class="form-input" id="session-timeout" value="30">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Auto-refresh Interval (seconds)</label>
+                <input type="number" class="form-input" id="refresh-interval" value="60">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Notifications</label>
+                <select class="form-select" id="email-notifications">
+                    <option value="all">All Notifications</option>
+                    <option value="important">Important Only</option>
+                    <option value="none">Disabled</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                <button class="action-btn secondary" onclick="closeModal('settings-modal')">
+                    Cancel
+                </button>
+                <button class="action-btn" onclick="saveSettings()">
+                    <i class="fas fa-save"></i> Save Settings
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backup Modal -->
+    <div class="modal" id="backup-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Backup & Restore</h3>
+                <button class="close-btn" onclick="closeModal('backup-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Backup Options</label>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button class="action-btn" onclick="createBackup()">
+                        <i class="fas fa-download"></i> Create Backup
+                    </button>
+                    <button class="action-btn secondary" onclick="document.getElementById('restore-file').click()">
+                        <i class="fas fa-upload"></i> Restore Backup
+                    </button>
+                </div>
+                <input type="file" id="restore-file" style="display: none;" accept=".json" onchange="restoreBackup(this)">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Backup History</label>
+                <div id="backup-history">
+                    <!-- Backup history will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">
+        <i id="toast-icon" class="fas fa-check-circle"></i>
+        <span id="toast-message"></span>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let charts = {};
+        let currentTheme = 'dark';
+        let currentTab = 'dashboard';
+        let selectedLeave = null;
+        let voiceRecognition = null;
+        let refreshInterval = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication();
+            initializeTheme();
+            loadAllData();
+            setupRealTimeUpdates();
+            initializeVoiceRecognition();
+            loadNotifications();
+        });
+
+        function checkAuthentication() {
+            const user = localStorage.getItem('currentUser');
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            currentUser = JSON.parse(user);
+            if (currentUser.role !== 'admin') {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            document.getElementById('user-name').textContent = currentUser.name;
+        }
+
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            currentTheme = savedTheme;
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            localStorage.setItem('theme', currentTheme);
+            updateThemeIcon(currentTheme);
+            showToast('Theme updated successfully!', 'success');
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-icon');
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        function loadAllData() {
+            updateStatistics();
+            loadLeaveRequests();
+            loadUsers();
+            loadActivityFeed();
+            loadPolicyConfigurations();
+            loadAuditLog();
+            createCharts();
+        }
+
+        function updateStatistics() {
+            const leaves = getLeaves();
+            const users = getUsers();
+            const today = new Date().toISOString().split('T')[0];
+            
+            const stats = {
+                totalLeaves: leaves.length,
+                pendingLeaves: leaves.filter(l => l.status === 'pending').length,
+                approvedLeaves: leaves.filter(l => l.status === 'approved' && l.submittedAt.split('T')[0] === today).length,
+                activeUsers: users.filter(u => u.status === 'active').length,
+                urgentRequests: leaves.filter(l => l.priority === 'urgent' && l.status === 'pending').length
+            };
+            
+            // Animate counters
+            animateCounter('total-leaves', stats.totalLeaves);
+            animateCounter('pending-leaves', stats.pendingLeaves);
+            animateCounter('approved-leaves', stats.approvedLeaves);
+            animateCounter('active-users', stats.activeUsers);
+            animateCounter('urgent-requests', stats.urgentRequests);
+        }
+
+        function animateCounter(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            let currentValue = 0;
+            const increment = targetValue / 30;
+            const timer = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= targetValue) {
+                    element.textContent = targetValue;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(currentValue);
+                }
+            }, 50);
+        }
+
+        function switchTab(tabName) {
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-content').classList.add('active');
+            
+            currentTab = tabName;
+            
+            // Load specific data for the tab
+            switch(tabName) {
+                case 'leave-management':
+                    loadLeaveRequests();
+                    break;
+                case 'user-management':
+                    loadUsers();
+                    break;
+                case 'reports':
+                    loadReportsData();
+                    break;
+                case 'audit-log':
+                    loadAuditLog();
+                    break;
+            }
+        }
+
+        function loadLeaveRequests() {
+            const leaves = getLeaves();
+            const tbody = document.getElementById('leave-table-body');
+            
+            tbody.innerHTML = leaves.map(leave => `
+                <tr>
+                    <td>#${leave.id}</td>
+                    <td>
+                        <div>
+                            <strong>${leave.userName}</strong><br>
+                            <small>${leave.userEmail}</small>
+                        </div>
+                    </td>
+                    <td>${leave.department || 'N/A'}</td>
+                    <td>
+                        <span class="status-badge status-${leave.type}">
+                            ${leave.type.charAt(0).toUpperCase() + leave.type.slice(1)}
+                        </span>
+                    </td>
+                    <td>${leave.fromDate} to ${leave.toDate}</td>
+                    <td>
+                        <span class="status-badge status-${leave.status}">
+                            ${leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
+                        </span>
+                    </td>
+                    <td>${formatDateTime(leave.submittedAt)}</td>
+                    <td>
+                        <button class="action-btn" onclick="reviewLeave('${leave.id}')" style="padding: 0.5rem;">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadUsers() {
+            const users = getUsers();
+            const tbody = document.getElementById('user-table-body');
+            
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td>${user.employeeId}</td>
+                    <td>
+                        <div>
+                            <strong>${user.name}</strong><br>
+                            <small>Joined: ${formatDate(user.createdAt)}</small>
+                        </div>
+                    </td>
+                    <td>${user.email}</td>
+                    <td>
+                        <span class="status-badge status-${user.role}">
+                            ${user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                        </span>
+                    </td>
+                    <td>${user.department || 'N/A'}</td>
+                    <td>${user.leaveBalance || 20} days</td>
+                    <td>
+                        <span class="status-badge ${user.status === 'active' ? 'status-approved' : 'status-rejected'}">
+                            ${user.status || 'Active'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-btn" onclick="editUser('${user.employeeId}')" style="padding: 0.5rem;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadActivityFeed() {
+            const leaves = getLeaves();
+            const container = document.getElementById('activity-feed');
+            
+            // Sort by most recent and take top 10
+            const recentActivity = leaves
+                .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
+                .slice(0, 10);
+            
+            container.innerHTML = recentActivity.map(leave => `
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-${getActivityIcon(leave.status)}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">
+                            ${leave.userName} ${getActivityText(leave.status)} ${leave.type} leave
+                        </div>
+                        <div class="activity-meta">
+                            ${formatDateTime(leave.submittedAt)} | Duration: ${leave.fromDate} to ${leave.toDate}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadPolicyConfigurations() {
+            const policies = getPolicies();
+            const container = document.getElementById('policy-list');
+            
+            container.innerHTML = policies.map(policy => `
+                <div class="card" style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3>${policy.name}</h3>
+                            <p>Quota: ${policy.quota} days | Carry Forward: ${policy.carryForward ? 'Yes' : 'No'}</p>
+                        </div>
+                        <div>
+                            <button class="action-btn secondary" onclick="editPolicy('${policy.id}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadAuditLog() {
+            const auditLog = getAuditLog();
+            const container = document.getElementById('audit-log-list');
+            
+            container.innerHTML = auditLog.map(entry => `
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-${getAuditIcon(entry.action)}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">
+                            ${entry.adminName} ${entry.action} leave request #${entry.leaveId}
+                        </div>
+                        <div class="activity-meta">
+                            ${formatDateTime(entry.timestamp)} | IP: ${entry.ipAddress || 'N/A'}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function reviewLeave(leaveId) {
+            const leaves = getLeaves();
+            selectedLeave = leaves.find(l => l.id === leaveId);
+            
+            if (!selectedLeave) return;
+            
+            document.getElementById('leave-details').innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Employee Details</label>
+                    <p><strong>Name:</strong> ${selectedLeave.userName}</p>
+                    <p><strong>Email:</strong> ${selectedLeave.userEmail}</p>
+                    <p><strong>Employee ID:</strong> ${selectedLeave.userId}</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Leave Details</label>
+                    <p><strong>Type:</strong> ${selectedLeave.type}</p>
+                    <p><strong>Duration:</strong> ${selectedLeave.fromDate} to ${selectedLeave.toDate}</p>
+                    <p><strong>Reason:</strong> ${selectedLeave.reason}</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Attachments</label>
+                    ${selectedLeave.attachments ? `<p>📎 ${selectedLeave.attachments}</p>` : '<p>No attachments</p>'}
+                </div>
+            `;
+            
+            openModal('leave-action-modal');
+        }
+
+        function approveLeave() {
+            if (!selectedLeave) return;
+            
+            const remarks = document.getElementById('admin-remarks').value;
+            
+            // Update leave status
+            const leaves = getLeaves();
+            const leaveIndex = leaves.findIndex(l => l.id === selectedLeave.id);
+            leaves[leaveIndex].status = 'approved';
+            leaves[leaveIndex].adminRemarks = remarks;
+            leaves[leaveIndex].reviewedAt = new Date().toISOString();
+            leaves[leaveIndex].reviewedBy = currentUser.name;
+            
+            localStorage.setItem('leaves', JSON.stringify(leaves));
+            
+            // Add to audit log
+            addAuditEntry('approved', selectedLeave.id);
+            
+            showToast('Leave request approved successfully!', 'success');
+            closeModal('leave-action-modal');
+            loadLeaveRequests();
+            updateStatistics();
+        }
+
+        function rejectLeave() {
+            if (!selectedLeave) return;
+            
+            const remarks = document.getElementById('admin-remarks').value;
+            
+            if (!remarks.trim()) {
+                showToast('Please provide remarks for rejection', 'error');
+                return;
+            }
+            
+            // Update leave status
+            const leaves = getLeaves();
+            const leaveIndex = leaves.findIndex(l => l.id === selectedLeave.id);
+            leaves[leaveIndex].status = 'rejected';
+            leaves[leaveIndex].adminRemarks = remarks;
+            leaves[leaveIndex].reviewedAt = new Date().toISOString();
+            leaves[leaveIndex].reviewedBy = currentUser.name;
+            
+            localStorage.setItem('leaves', JSON.stringify(leaves));
+            
+            // Add to audit log
+            addAuditEntry('rejected', selectedLeave.id);
+            
+            showToast('Leave request rejected', 'warning');
+            closeModal('leave-action-modal');
+            loadLeaveRequests();
+            updateStatistics();
+        }
+
+        function generateQRCode() {
+            if (!selectedLeave) return;
+            
+            const qrData = JSON.stringify({
+                leaveId: selectedLeave.id,
+                employeeName: selectedLeave.userName,
+                leaveType: selectedLeave.type,
+                duration: `${selectedLeave.fromDate} to ${selectedLeave.toDate}`,
+                status: selectedLeave.status,
+                approvedBy: currentUser.name,
+                timestamp: new Date().toISOString()
+            });
+            
+            const canvas = document.getElementById('qr-canvas');
+            QRCode.toCanvas(canvas, qrData, function (error) {
+                if (error) {
+                    showToast('Error generating QR code', 'error');
+                } else {
+                    document.getElementById('qr-container').style.display = 'block';
+                    showToast('QR code generated successfully!', 'success');
+                }
+            });
+        }
+
+        function initializeVoiceRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                voiceRecognition = new SpeechRecognition();
+                voiceRecognition.continuous = false;
+                voiceRecognition.interimResults = false;
+                voiceRecognition.lang = 'en-US';
+                
+                voiceRecognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('admin-remarks').value += transcript + ' ';
+                    document.getElementById('voice-btn').classList.remove('recording');
+                    voiceRecognition.stop();
+                };
+                
+                voiceRecognition.onstart = function() {
+                    document.getElementById('voice-btn').classList.add('recording');
+                };
+                
+                voiceRecognition.onend = function() {
+                    document.getElementById('voice-btn').classList.remove('recording');
+                };
+                
+                voiceRecognition.onerror = function(event) {
+                    showToast('Voice recognition error: ' + event.error, 'error');
+                    document.getElementById('voice-btn').classList.remove('recording');
+                };
+            } else {
+                document.getElementById('voice-btn').style.display = 'none';
+                showToast('Voice recognition not supported in this browser', 'warning');
+            }
+        }
+
+        function startVoiceInput() {
+            if (voiceRecognition) {
+                voiceRecognition.start();
+            }
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        function generateSystemReport() {
+            showToast('Generating system report...', 'info');
+            // Add logic to generate a comprehensive system report
+        }
+
+        function saveSettings() {
+            const sessionTimeout = document.getElementById('session-timeout').value;
+            const refreshIntervalValue = document.getElementById('refresh-interval').value;
+            const emailNotifications = document.getElementById('email-notifications').value;
+            
+            localStorage.setItem('sessionTimeout', sessionTimeout);
+            localStorage.setItem('refreshInterval', refreshIntervalValue);
+            localStorage.setItem('emailNotifications', emailNotifications);
+            
+            setupRealTimeUpdates();
+            
+            showToast('Settings saved successfully!', 'success');
+            closeModal('settings-modal');
+        }
+
+        function createBackup() {
+            const leaves = getLeaves();
+            const users = getUsers();
+            const policies = getPolicies();
+            const auditLog = getAuditLog();
+            
+            const backupData = {
+                leaves: leaves,
+                users: users,
+                policies: policies,
+                auditLog: auditLog,
+                timestamp: new Date().toISOString()
+            };
+            
+            const jsonData = JSON.stringify(backupData);
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `eduleave_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            showToast('Backup created successfully!', 'success');
+            updateBackupHistory();
+        }
+
+        function restoreBackup(input) {
+            const file = input.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const backupData = JSON.parse(e.target.result);
+                    
+                    localStorage.setItem('leaves', JSON.stringify(backupData.leaves));
+                    localStorage.setItem('users', JSON.stringify(backupData.users));
+                    localStorage.setItem('policies', JSON.stringify(backupData.policies));
+                    localStorage.setItem('auditLog', JSON.stringify(backupData.auditLog));
+                    
+                    loadAllData();
+                    showToast('Backup restored successfully!', 'success');
+                    updateBackupHistory();
+                } catch (error) {
+                    showToast('Error restoring backup: ' + error, 'error');
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+
+        function updateBackupHistory() {
+            // Placeholder for displaying backup history
+            document.getElementById('backup-history').innerHTML = '<p>No backup history available.</p>';
+        }
+
+        function exportLeaveData() {
+            showToast('Exporting leave data...', 'info');
+            // Add logic to export leave data based on filters
+        }
+
+        function editUser(userId) {
+            showToast('Editing user: ' + userId, 'info');
+            // Add logic to open a modal or page to edit user details
+        }
+
+        function editPolicy(policyId) {
+            showToast('Editing policy: ' + policyId, 'info');
+            // Add logic to open a modal or page to edit policy details
+        }
+
+        function generateReport() {
+            showToast('Generating report...', 'info');
+            // Add logic to generate a report based on selected criteria
+        }
+
+        function exportReport(format) {
+            showToast(`Exporting report as ${format}...`, 'info');
+            // Add logic to export the generated report in the specified format
+        }
+
+        function exportAuditLog() {
+            showToast('Exporting audit log...', 'info');
+            // Add logic to export the audit log
+        }
+
+        function refreshActivity() {
+            loadActivityFeed();
+            showToast('Activity feed refreshed!', 'success');
+        }
+
+        function loadReportsData() {
+            // Placeholder for loading data for reports
+            showToast('Loading reports data...', 'info');
+        }
+
+        function getLeaves() {
+            return JSON.parse(localStorage.getItem('leaves') || '[]');
+        }
+
+        function getUsers() {
+            return JSON.parse(localStorage.getItem('users') || '[]');
+        }
+
+        function getPolicies() {
+            return JSON.parse(localStorage.getItem('policies') || '[]');
+        }
+
+        function getAuditLog() {
+            return JSON.parse(localStorage.getItem('auditLog') || '[]');
+        }
+
+        function addAuditEntry(action, leaveId) {
+            const auditLog = getAuditLog();
+            const newEntry = {
+                adminName: currentUser.name,
+                action: action,
+                leaveId: leaveId,
+                timestamp: new Date().toISOString(),
+                ipAddress: '127.0.0.1' // Placeholder for IP address
+            };
+            auditLog.push(newEntry);
+            localStorage.setItem('auditLog', JSON.stringify(auditLog));
+        }
+
+        function getActivityIcon(status) {
+            const icons = {
+                pending: 'clock',
+                approved: 'check',
+                rejected: 'times'
+            };
+            return icons[status] || 'file';
+        }
+
+        function getActivityText(status) {
+            const texts = {
+                pending: 'submitted',
+                approved: 'got approved for',
+                rejected: 'got rejected for'
+            };
+            return texts[status] || 'applied for';
+        }
+
+        function getAuditIcon(action) {
+            const icons = {
+                approve: 'check-circle',
+                reject: 'times-circle',
+                create: 'plus-circle',
+                update: 'edit',
+                delete: 'trash-alt'
+            };
+            return icons[action] || 'history';
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function formatDateTime(dateString) {
+            return new Date(dateString).toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            const messageEl = document.getElementById('toast-message');
+            
+            messageEl.textContent = message;
+            
+            toast.classList.remove('success', 'error', 'warning');
+
+            if (type === 'error') {
+                toast.classList.add('error');
+                icon.className = 'fas fa-exclamation-circle';
+            } else if (type === 'warning') {
+                toast.classList.add('warning');
+                icon.className = 'fas fa-exclamation-triangle';
+            } else {
+                toast.classList.add('success');
+                icon.className = 'fas fa-check-circle';
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+
+        function setupRealTimeUpdates() {
+            const refreshIntervalValue = localStorage.getItem('refreshInterval') || 60;
+            
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+            
+            refreshInterval = setInterval(() => {
+                if (currentTab === 'dashboard') {
+                    updateStatistics();
+                    loadActivityFeed();
+                    createCharts();
+                } else if (currentTab === 'leave-management') {
+                    loadLeaveRequests();
+                } else if (currentTab === 'user-management') {
+                    loadUsers();
+                } else if (currentTab === 'audit-log') {
+                    loadAuditLog();
+                }
+                
+                loadNotifications();
+            }, refreshIntervalValue * 1000);
+        }
+
+        function loadNotifications() {
+            const notifications = [
+                { id: 1, message: 'New leave request from John Doe', time: '5 minutes ago', read: false },
+                { id: 2, message: 'Leave request approved for Jane Smith', time: '30 minutes ago', read: false },
+                { id: 3, message: 'Policy update: Vacation leave quota increased', time: '1 hour ago', read: false }
+            ];
+            
+            const container = document.getElementById('notification-list');
+            const notificationCount = document.getElementById('notification-count');
+            
+            container.innerHTML = notifications.map(notification => `
+                <div class="notification-item ${notification.read ? '' : 'unread'}" onclick="markAsRead(${notification.id})">
+                    <p>${notification.message}</p>
+                    <small>${notification.time}</small>
+                </div>
+            `).join('');
+            
+            const unreadCount = notifications.filter(n => !n.read).length;
+            notificationCount.textContent = unreadCount;
+            notificationCount.style.display = unreadCount > 0 ? 'flex' : 'none';
+        }
+
+        function markAsRead(notificationId) {
+            showToast('Notification marked as read', 'success');
+            // Add logic to update notification status in local storage or database
+        }
+
+        function toggleNotifications() {
+            document.getElementById('notification-panel').classList.toggle('show');
+        }
+
+function createCharts() {
+    const leaves = getLeaves();
+    const users = getUsers();
+    
+    // Clear existing charts
+    Object.values(charts).forEach(chart => {
+        if (chart) chart.destroy();
+    });
+    
+    // 1. Leave Status Distribution Chart
+    const statusData = {
+        pending: leaves.filter(l => l.status === 'pending').length,
+        approved: leaves.filter(l => l.status === 'approved').length,
+        rejected: leaves.filter(l => l.status === 'rejected').length
+    };
+    
+    charts.statusChart = new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Pending', 'Approved', 'Rejected'],
+            datasets: [{
+                data: [statusData.pending, statusData.approved, statusData.rejected],
+                backgroundColor: ['#f39c12', '#27ae60', '#e74c3c'],
+                borderWidth: 0,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: 'var(--text-primary)',
+                        padding: 20,
+                        usePointStyle: true
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const total = statusData.pending + statusData.approved + statusData.rejected;
+                            const percentage = ((context.parsed / total) * 100).toFixed(1);
+                            return `${context.label}: ${context.parsed} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+    
+    // 2. Department-wise Analysis
+    const departmentData = {};
+    leaves.forEach(leave => {
+        const dept = leave.department || 'Unknown';
+        if (!departmentData[dept]) {
+            departmentData[dept] = { total: 0, approved: 0, pending: 0, rejected: 0 };
+        }
+        departmentData[dept].total++;
+        departmentData[dept][leave.status]++;
+    });
+    
+    charts.departmentChart = new Chart(document.getElementById('departmentChart'), {
+        type: 'bar',
+        data: {
+            labels: Object.keys(departmentData),
+            datasets: [
+                {
+                    label: 'Approved',
+                    data: Object.values(departmentData).map(d => d.approved),
+                    backgroundColor: '#27ae60',
+                    borderRadius: 4
+                },
+                {
+                    label: 'Pending',
+                    data: Object.values(departmentData).map(d => d.pending),
+                    backgroundColor: '#f39c12',
+                    borderRadius: 4
+                },
+                {
+                    label: 'Rejected',
+                    data: Object.values(departmentData).map(d => d.rejected),
+                    backgroundColor: '#e74c3c',
+                    borderRadius: 4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: { color: 'var(--text-primary)' }
+                },
+                tooltip: {
+                    callbacks: {
+                        afterLabel: function(context) {
+                            const dept = context.label;
+                            const total = departmentData[dept].total;
+                            const percentage = ((context.parsed.y / total) * 100).toFixed(1);
+                            return `${percentage}% of department total`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                    ticks: { color: 'var(--text-primary)' },
+                    grid: { color: 'var(--border-color)' }
+                },
+                y: {
+                    stacked: true,
+                    ticks: { color: 'var(--text-primary)' },
+                    grid: { color: 'var(--border-color)' }
+                }
+            }
+        }
+    });
+    
+    // 3. Monthly Trends with Detailed Analysis
+    const monthlyData = {};
+    const last12Months = [];
+    for (let i = 11; i >= 0; i--) {
+        const date = new Date();
+        date.setMonth(date.getMonth() - i);
+        const monthKey = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        last12Months.push(monthKey);
+        monthlyData[monthKey] = { total: 0, approved: 0, rejected: 0 };
+    }
+    
+    leaves.forEach(leave => {
+        const leaveDate = new Date(leave.submittedAt);
+        const monthKey = leaveDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        if (monthlyData[monthKey]) {
+            monthlyData[monthKey].total++;
+            if (leave.status === 'approved') monthlyData[monthKey].approved++;
+            if (leave.status === 'rejected') monthlyData[monthKey].rejected++;
+        }
+    });
+    
+    charts.monthlyChart = new Chart(document.getElementById('monthlyChart'), {
+        type: 'line',
+        data: {
+            labels: last12Months,
+            datasets: [
+                {
+                    label: 'Total Requests',
+                    data: last12Months.map(month => monthlyData[month].total),
+                    borderColor: '#3498db',
+                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Approved',
+                    data: last12Months.map(month => monthlyData[month].approved),
+                    borderColor: '#27ae60',
+                    backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'Rejected',
+                    data: last12Months.map(month => monthlyData[month].rejected),
+                    borderColor: '#e74c3c',
+                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: { color: 'var(--text-primary)' }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: 'var(--text-primary)' },
+                    grid: { color: 'var(--border-color)' }
+                },
+                y: {
+                    ticks: { color: 'var(--text-primary)' },
+                    grid: { color: 'var(--border-color)' }
+                }
+            }
+        }
+    });
+    
+    // 4. Leave Type Analysis with Duration
+    const typeAnalysis = {};
+    leaves.forEach(leave => {
+        if (!typeAnalysis[leave.type]) {
+            typeAnalysis[leave.type] = {
+                count: 0,
+                totalDays: 0,
+                approved: 0,
+                avgDuration: 0
+            };
+        }
+        typeAnalysis[leave.type].count++;
+        if (leave.status === 'approved') typeAnalysis[leave.type].approved++;
+        
+        // Calculate duration
+        const fromDate = new Date(leave.fromDate);
+        const toDate = new Date(leave.toDate);
+        const duration = Math.ceil((toDate - fromDate) / (1000 * 60 * 60 * 24)) + 1;
+        typeAnalysis[leave.type].totalDays += duration;
+    });
+    
+    // Calculate average duration
+    Object.keys(typeAnalysis).forEach(type => {
+        typeAnalysis[type].avgDuration = (typeAnalysis[type].totalDays / typeAnalysis[type].count).toFixed(1);
+    });
+    
+    charts.typeChart = new Chart(document.getElementById('typeChart'), {
+        type: 'radar',
+        data: {
+            labels: Object.keys(typeAnalysis),
+            datasets: [
+                {
+                    label: 'Total Requests',
+                    data: Object.values(typeAnalysis).map(t => t.count),
+                    borderColor: '#3498db',
+                    backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                    pointBackgroundColor: '#3498db'
+                },
+                {
+                    label: 'Approval Rate (%)',
+                    data: Object.values(typeAnalysis).map(t => ((t.approved / t.count) * 100).toFixed(1)),
+                    borderColor: '#27ae60',
+                    backgroundColor: 'rgba(39, 174, 96, 0.2)',
+                    pointBackgroundColor: '#27ae60'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: { color: 'var(--text-primary)' }
+                }
+            },
+            scales: {
+                r: {
+                    ticks: { color: 'var(--text-primary)' },
+                    grid: { color: 'var(--border-color)' },
+                    pointLabels: { color: 'var(--text-primary)' }
+                }
+            }
+        }
+    });
+    
+    // Generate detailed analytics summary
+    generateAnalyticsSummary(leaves, users, departmentData, typeAnalysis, monthlyData);
+}
+
+function generateAnalyticsSummary(leaves, users, departmentData, typeAnalysis, monthlyData) {
+    const today = new Date();
+    const thisMonth = today.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    
+    // Calculate key metrics
+    const totalRequests = leaves.length;
+    const approvalRate = ((leaves.filter(l => l.status === 'approved').length / totalRequests) * 100).toFixed(1);
+    const avgProcessingTime = calculateAvgProcessingTime(leaves);
+    const mostRequestedType = Object.keys(typeAnalysis).reduce((a, b) => typeAnalysis[a].count > typeAnalysis[b].count ? a : b);
+    const busiestDepartment = Object.keys(departmentData).reduce((a, b) => departmentData[a].total > departmentData[b].total ? a : b);
+    
+    // Month-over-month growth
+    const thisMonthRequests = monthlyData[thisMonth]?.total || 0;
+    const lastMonthRequests = monthlyData[lastMonth]?.total || 0;
+    const monthlyGrowth = lastMonthRequests > 0 ? (((thisMonthRequests - lastMonthRequests) / lastMonthRequests) * 100).toFixed(1) : 0;
+    
+    // Update the analytics summary in the dashboard
+    const summaryHTML = `
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-chart-line"></i>
+                    <h2>Analytics Summary</h2>
+                </div>
+                <button class="action-btn secondary" onclick="exportAnalytics()">
+                    <i class="fas fa-download"></i> Export Analytics
+                </button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div class="analytics-card">
+                    <h3><i class="fas fa-percentage"></i> Overall Performance</h3>
+                    <ul>
+                        <li><strong>Total Requests:</strong> ${totalRequests}</li>
+                        <li><strong>Approval Rate:</strong> ${approvalRate}%</li>
+                        <li><strong>Avg Processing Time:</strong> ${avgProcessingTime} days</li>
+                        <li><strong>Monthly Growth:</strong> ${monthlyGrowth > 0 ? '+' : ''}${monthlyGrowth}%</li>
+                    </ul>
+                </div>
+                <div class="analytics-card">
+                    <h3><i class="fas fa-trophy"></i> Top Performers</h3>
+                    <ul>
+                        <li><strong>Most Requested Type:</strong> ${mostRequestedType} (${typeAnalysis[mostRequestedType].count} requests)</li>
+                        <li><strong>Busiest Department:</strong> ${busiestDepartment} (${departmentData[busiestDepartment].total} requests)</li>
+                        <li><strong>Best Approval Rate:</strong> ${getBestApprovalRate(typeAnalysis)}</li>
+                    </ul>
+                </div>
+                <div class="analytics-card">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Areas of Concern</h3>
+                    <ul>
+                        <li><strong>Pending Requests:</strong> ${leaves.filter(l => l.status === 'pending').length}</li>
+                        <li><strong>High Rejection Rate:</strong> ${getHighRejectionDept(departmentData)}</li>
+                        <li><strong>Overdue Reviews:</strong> ${getOverdueReviews(leaves)}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Insert analytics summary after the charts
+    const chartsGrid = document.querySelector('.charts-grid');
+    if (chartsGrid && !document.querySelector('.analytics-summary')) {
+        const summaryDiv = document.createElement('div');
+        summaryDiv.className = 'analytics-summary';
+        summaryDiv.innerHTML = summaryHTML;
+        chartsGrid.parentNode.insertBefore(summaryDiv, chartsGrid.nextSibling);
+    }
+}
+
+function calculateAvgProcessingTime(leaves) {
+    const processedLeaves = leaves.filter(l => l.reviewedAt && l.submittedAt);
+    if (processedLeaves.length === 0) return 0;
+    
+    const totalTime = processedLeaves.reduce((sum, leave) => {
+        const submitted = new Date(leave.submittedAt);
+        const reviewed = new Date(leave.reviewedAt);
+        const timeDiff = Math.ceil((reviewed - submitted) / (1000 * 60 * 60 * 24));
+        return sum + timeDiff;
+    }, 0);
+    
+    return (totalTime / processedLeaves.length).toFixed(1);
+}
+
+function getBestApprovalRate(typeAnalysis) {
+    let bestType = '';
+    let bestRate = 0;
+    
+    Object.keys(typeAnalysis).forEach(type => {
+        const rate = (typeAnalysis[type].approved / typeAnalysis[type].count) * 100;
+        if (rate > bestRate) {
+            bestRate = rate;
+            bestType = type;
+        }
+    });
+    
+    return `${bestType} (${bestRate.toFixed(1)}%)`;
+}
+
+function getHighRejectionDept(departmentData) {
+    let worstDept = '';
+    let worstRate = 0;
+    
+    Object.keys(departmentData).forEach(dept => {
+        const rate = (departmentData[dept].rejected / departmentData[dept].total) * 100;
+        if (rate > worstRate) {
+            worstRate = rate;
+            worstDept = dept;
+        }
+    });
+    
+    return worstRate > 0 ? `${worstDept} (${worstRate.toFixed(1)}%)` : 'None';
+}
+
+function getOverdueReviews(leaves) {
+    const today = new Date();
+    const overdueLeaves = leaves.filter(leave => {
+        if (leave.status !== 'pending') return false;
+        const submitted = new Date(leave.submittedAt);
+        const daysDiff = Math.ceil((today - submitted) / (1000 * 60 * 60 * 24));
+        return daysDiff > 3; // Consider overdue after 3 days
+    });
+    
+    return overdueLeaves.length;
+}
+
+function exportAnalytics() {
+    const leaves = getLeaves();
+    const users = getUsers();
+    
+    // Generate comprehensive analytics report
+    const analyticsData = {
+        generatedAt: new Date().toISOString(),
+        summary: {
+            totalRequests: leaves.length,
+            approvalRate: ((leaves.filter(l => l.status === 'approved').length / leaves.length) * 100).toFixed(1),
+            avgProcessingTime: calculateAvgProcessingTime(leaves),
+            activeUsers: users.filter(u => u.status === 'active').length
+        },
+        departmentAnalysis: generateDepartmentAnalysis(leaves),
+        typeAnalysis: generateTypeAnalysis(leaves),
+        monthlyTrends: generateMonthlyTrends(leaves),
+        recommendations: generateRecommendations(leaves)
+    };
+    
+    const jsonData = JSON.stringify(analyticsData, null, 2);
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `analytics_report_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+    
+    showToast('Analytics report exported successfully!', 'success');
+}
+
+function generateDepartmentAnalysis(leaves) {
+    const analysis = {};
+    leaves.forEach(leave => {
+        const dept = leave.department || 'Unknown';
+        if (!analysis[dept]) {
+            analysis[dept] = {
+                total: 0,
+                approved: 0,
+                rejected: 0,
+                pending: 0,
+                avgDuration: 0,
+                totalDays: 0
+            };
+        }
+        analysis[dept].total++;
+        analysis[dept][leave.status]++;
+        
+        // Calculate duration
+        const fromDate = new Date(leave.fromDate);
+        const toDate = new Date(leave.toDate);
+        const duration = Math.ceil((toDate - fromDate) / (1000 * 60 * 60 * 24)) + 1;
+        analysis[dept].totalDays += duration;
+    });
+    
+    // Calculate averages
+    Object.keys(analysis).forEach(dept => {
+        analysis[dept].avgDuration = (analysis[dept].totalDays / analysis[dept].total).toFixed(1);
+        analysis[dept].approvalRate = ((analysis[dept].approved / analysis[dept].total) * 100).toFixed(1);
+    });
+    
+    return analysis;
+}
+
+function generateTypeAnalysis(leaves) {
+    const analysis = {};
+    leaves.forEach(leave => {
+        if (!analysis[leave.type]) {
+            analysis[leave.type] = {
+                count: 0,
+                approved: 0,
+                rejected: 0,
+                pending: 0,
+                totalDays: 0,
+                avgDuration: 0
+            };
+        }
+        analysis[leave.type].count++;
+        analysis[leave.type][leave.status]++;
+        
+        const fromDate = new Date(leave.fromDate);
+        const toDate = new Date(leave.toDate);
+        const duration = Math.ceil((toDate - fromDate) / (1000 * 60 * 60 * 24)) + 1;
+        analysis[leave.type].totalDays += duration;
+    });
+    
+    Object.keys(analysis).forEach(type => {
+        analysis[type].avgDuration = (analysis[type].totalDays / analysis[type].count).toFixed(1);
+        analysis[type].approvalRate = ((analysis[type].approved / analysis[type].count) * 100).toFixed(1);
+    });
+    
+    return analysis;
+}
+
+function generateMonthlyTrends(leaves) {
+    const trends = {};
+    leaves.forEach(leave => {
+        const month = new Date(leave.submittedAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        if (!trends[month]) {
+            trends[month] = { total: 0, approved: 0, rejected: 0, pending: 0 };
+        }
+        trends[month].total++;
+        trends[month][leave.status]++;
+    });
+    
+    return trends;
+}
+
+function generateRecommendations(leaves) {
+    const recommendations = [];
+    
+    // Check for high pending requests
+    const pendingCount = leaves.filter(l => l.status === 'pending').length;
+    if (pendingCount > 10) {
+        recommendations.push({
+            type: 'urgent',
+            message: `High number of pending requests (${pendingCount}). Consider increasing review frequency.`
+        });
+    }
+    
+    // Check for overdue reviews
+    const overdueCount = getOverdueReviews(leaves);
+    if (overdueCount > 0) {
+        recommendations.push({
+            type: 'warning',
+            message: `${overdueCount} requests are overdue for review (>3 days). Immediate attention required.`
+        });
+    }
+    
+    // Check approval rates
+    const approvalRate = (leaves.filter(l => l.status === 'approved').length / leaves.length) * 100;
+    if (approvalRate < 70) {
+        recommendations.push({
+            type: 'info',
+            message: `Low approval rate (${approvalRate.toFixed(1)}%). Review leave policies or approval criteria.`
+        });
+    }
+    
+    return recommendations;
+}
+    </script>
+</body>
+</html>
